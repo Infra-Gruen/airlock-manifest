@@ -1,0 +1,36 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: airlock-service
+spec:
+  selector:
+    app: airlock
+  ports:
+  - protocol: "TCP"
+    port: 3333
+    targetPort: 3333
+  type: LoadBalancer
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airlock
+spec:
+  selector:
+    matchLabels:
+      app: airlock
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: airlock
+    spec:
+      containers:
+      - name: airlock
+        image: quay.io/coreos/airlock@sha256:ccd14235d5470863ac1b7ad6a52822255e3deb9efda0907bb4a962bb68bee618
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3333
